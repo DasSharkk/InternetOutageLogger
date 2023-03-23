@@ -1,2 +1,2 @@
-rootProject.name = "InternetOuttageLogger"
+rootProject.name = "InternetOutageLogger"
 

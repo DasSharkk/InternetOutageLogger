@@ -1,5 +1,6 @@
 package me.dasshark;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -7,9 +8,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Main {
+
+    static String path = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "outages.txt";
+
     public static void main(String[] args) {
         boolean wasConnected = true;
         Date offlineSince = null;
+        logStarted();
         while (true) {
             try {
                 InetAddress inet = InetAddress.getByName("8.8.8.8");
@@ -29,7 +34,8 @@ public class Main {
 
     private static void logOutage() {
         try {
-            FileWriter writer = new FileWriter("outages.txt", true);
+            File file = new File(path);
+            FileWriter writer = new FileWriter(file, true);
             Date date = new Date();
             String formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
             writer.write("Internet outage detected at " + formattedDate + ".\n");
@@ -39,13 +45,28 @@ public class Main {
 
     private static void logOnline(Date offlineSince) {
         try {
-            FileWriter writer = new FileWriter("outages.txt", true);
+            File file = new File(path);
+            FileWriter writer = new FileWriter(file, true);
             Date date = new Date();
             String formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
             long outageDuration = (new Date().getTime() - offlineSince.getTime());
             writer.write("Internet online again at " + formattedDate + ". It was offline for " + format(outageDuration) + ".\n");
             writer.close();
         } catch (IOException ignored) {}
+    }
+
+    private static void logStarted() {
+        try {
+            File file = new File(path);
+            FileWriter writer = new FileWriter(file, true);
+            Date date = new Date();
+            String formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+            writer.write("InternetOutageLogger by DasShark started at " + formattedDate + ".\n");
+            writer.close();
+            System.out.println("Done! " + path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static String format(long outageDurationMillis) {
